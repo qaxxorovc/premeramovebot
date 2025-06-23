@@ -2,7 +2,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from loader import dp
-from keyboards.inline.keyrboards import get_check_admin_buttons, cancel_user,sub_cc
+from keyboards.inline.keyrboards import get_check_admin_buttons, cancel_user,sub_cc,cancel_user_back, main_menu_for_users
 from data.config import debug_group
 from read_json import get_from_json, change_from_json
 from database.manage_tables import get_user_data, update_user_premium
@@ -59,14 +59,14 @@ async def buy_start(call: types.CallbackQuery, state: FSMContext):
             video=helper_video,
             caption=text,
             parse_mode="HTML",
-            reply_markup=cancel_user
+            reply_markup=cancel_user_back
         )
     else:
         text = f"<b>💬 Ho‘sh, qancha tashlamoqchisiz?</b>"
         await call.message.answer(
             text,
             parse_mode="HTML",
-            reply_markup=cancel_user
+            reply_markup=cancel_user_back
         )
 
     await BuyStates.amount.set()
@@ -95,7 +95,7 @@ async def buy_subscription(callback: types.CallbackQuery):
 
     await update_user_premium(user_id=user_id, premium_status="true", sell_time=today, new_cash=new_cash)
 
-    await callback.message.answer("✅ Tabriklaymiz! 1 oylik obunaga muvaffaqiyatli ulandingiz.")
+    await callback.message.answer("✅ Tabriklaymiz! 1 oylik obunaga muvaffaqiyatli ulandingiz.", reply_markup=main_menu_for_users)
     await callback.answer()
 
 
@@ -125,10 +125,10 @@ async def buy_start(msg: types.Message):
 @dp.message_handler(state=BuyStates.amount)
 async def get_amount(msg: types.Message, state: FSMContext):
     if not msg.text.isdigit():
-        await msg.answer("❗️Faqat raqam kiriting.")
+        await msg.answer("❗️Faqat raqam kiriting.", reply_markup=cancel_user_back)
         return
     await state.update_data(amount=int(msg.text))
-    await msg.answer("✅ Endi chekni yuboring (screenshot yoki rasm ko‘rinishida).")
+    await msg.answer("✅ Endi chekni yuboring (screenshot yoki rasm ko‘rinishida).", reply_markup=cancel_user_back)
     await BuyStates.check.set()
 
 @dp.message_handler(content_types=types.ContentType.PHOTO, state=BuyStates.check)

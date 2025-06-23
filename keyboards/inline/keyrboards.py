@@ -51,7 +51,11 @@ cancel_admin = InlineKeyboardMarkup(row_width=2).add(
 sub_cc = InlineKeyboardMarkup(row_width=1).add(
     InlineKeyboardButton(text="Obuna olish❕", callback_data="buy_sub"),
     InlineKeyboardButton(text="Hisob to'ldirish 💸", callback_data="add_cash_money"),
-    InlineKeyboardButton(text="Bekor qilish ❌", callback_data="cancel_user")
+    InlineKeyboardButton(text="◀️ Orqaga", callback_data="cancel_user")
+)
+
+cancel_user_back = InlineKeyboardMarkup(row_width=2).add(
+    InlineKeyboardButton(text="◀️ Orqaga", callback_data="cancel_user")
 )
 
 cancel_user = InlineKeyboardMarkup(row_width=2).add(
