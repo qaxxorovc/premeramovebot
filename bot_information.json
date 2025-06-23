@@ -1,15 +1,39 @@
 {
     "bot_requires_premium": true,
-    "bot_mouth_money": 15000,
-    "helper_video": "",
-    "card_number": 1221,
-    "card_owner": "Palonchi Pisnomchiyev",
+    "bot_mouth_money": 5000,
+    "helper_video": "BAACAgIAAxkBAAIBRmhZXHM5o2p8OVW_-TOBRijMPx43AAIqdQACnavISkt2SGVpAXgwNgQ",
+    "card_number": 4073420044842486,
+    "card_owner": "OLTIN.SAMANDAROVA",
     "daily_users_count": [
         {
             "id": 8030337048
         },
         {
             "id": 8079178471
+        },
+        {
+            "id": 5811645663
+        },
+        {
+            "id": 7202689960
+        },
+        {
+            "id": 1228615166
+        },
+        {
+            "id": 5354931369
+        },
+        {
+            "id": 5704738055
+        },
+        {
+            "id": 6853534729
+        },
+        {
+            "id": 6517969519
+        },
+        {
+            "id": 6132764534
         }
     ]
 }
