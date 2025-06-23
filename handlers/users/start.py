@@ -26,12 +26,13 @@ Kerakli menyudan birini tanlang:""",
     
 
 @dp.callback_query_handler(lambda c: c.data == "cancel_user", state="*")
-async def cancel_user(event: types.Message | types.CallbackQuery, state: FSMContext):
+async def cancel_user(call: types.CallbackQuery, state: FSMContext):
     await state.finish()
 
     text = "✅ Barcha jarayonlar bekor qilindi."
 
-    if isinstance(event, types.Message):
-        await event.answer(text, reply_markup=main_menu_for_users)
-    else:
-        await event.message.edit_text(text, reply_markup=main_menu_for_users)
+    try:
+        await call.message.edit_text(text, reply_markup=main_menu_for_users)
+    except:
+        await call.message.answer(text, reply_markup=main_menu_for_users)
+    
