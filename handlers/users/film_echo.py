@@ -1,5 +1,6 @@
 from aiogram.types import InlineQuery, InlineQueryResultArticle, InputTextMessageContent
 from uuid import uuid4
+from data.config import BOTUSERNAME
 from database.create_channels import connect_db
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loader import dp
@@ -25,9 +26,10 @@ async def inline_movie_search(inline_query: InlineQuery):
             InlineQueryResultArticle(
                 id=str(uuid4()),
                 title=name.split("\n")[0][:64],
-                description=name,
+                description=f"{name}",
                 input_message_content=InputTextMessageContent(
-                    message_text=f"📽 {name}"
+                    message_text=f"📽 {name}\n\n <i>Iltimos, tugmani bosishdan oldin botga start bosganingizga ishonch hosil qiling!</i> <b>@{BOTUSERNAME}</b>",
+                    parse_mode="HTML"
                 ),
                 reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
                     InlineKeyboardButton("🎬 Filmni olish", callback_data=f"get_movie:{movie_id}")
@@ -45,37 +47,40 @@ from read_json import get_from_json
 
 @dp.callback_query_handler(lambda c: c.data.startswith("get_movie:"))
 async def send_movie_video(callback_query: CallbackQuery):
-    movie_id_str = callback_query.data.split(":")[1]
+    try:
+        movie_id_str = callback_query.data.split(":")[1]
 
-    if not movie_id_str.isdigit():
-        await bot.send_message(callback_query.from_user.id, "❌ Noto‘g‘ri kino ID.")
-        return
-
-    movie_id = int(movie_id_str)
-    movie = await get_movie_by_id(movie_id)
-
-    if not movie:
-        await bot.send_message(callback_query.from_user.id, "❌ Bunday ID bilan film topilmadi.")
-        return
-
-    bot_requires_premium = get_from_json("bot_requires_premium")
-
-    if bot_requires_premium:
-        is_premium = await get_user_premium_status(callback_query.from_user.id)
-        if not is_premium:
-            await bot.send_message(
-                callback_query.from_user.id,
-                "❗️ Ushbu filmni ko‘rish uchun tarif sotib olishingiz kerak.\n"
-                "🛒 Tarif olish uchun /buy yoki menyudagi 'Tarif sotib olish' tugmasini bosing."
-            )
+        if not movie_id_str.isdigit():
+            await bot.send_message(callback_query.from_user.id, "❌ Noto‘g‘ri kino ID.")
             return
 
-    await add_download(movie_id)
-    _, video_id, name, count = movie
+        movie_id = int(movie_id_str)
+        movie = await get_movie_by_id(movie_id)
 
-    await bot.send_video(
-        chat_id=callback_query.from_user.id,
-        video=video_id,
-        caption=f"🎬 {name}\n📥 Yuklab olingan: {count} marta",
-        protect_content=True
-    )
+        if not movie:
+            await bot.send_message(callback_query.from_user.id, "❌ Bunday ID bilan film topilmadi.")
+            return
+
+        bot_requires_premium = get_from_json("bot_requires_premium")
+
+        if bot_requires_premium:
+            is_premium = await get_user_premium_status(callback_query.from_user.id)
+            if not is_premium:
+                await bot.send_message(
+                    callback_query.from_user.id,
+                    "❗️ Ushbu filmni ko‘rish uchun tarif sotib olishingiz kerak.\n"
+                    "🛒 Tarif olish uchun /buy yoki menyudagi 'Tarif sotib olish' tugmasini bosing."
+                )
+                return
+
+        await add_download(movie_id)
+        _, video_id, name, count = movie
+
+        await bot.send_video(
+            chat_id=callback_query.from_user.id,
+            video=video_id,
+            caption=f"🎬 {name}\n📥 Yuklab olingan: {count} marta",
+            protect_content=True
+        )
+    except:
+        print("ERROR +++++++++++++++++++++++++++++++++++++")
