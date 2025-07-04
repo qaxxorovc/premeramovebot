@@ -8,6 +8,9 @@ main_menu_for_users = InlineKeyboardMarkup(inline_keyboard=[
     ],
     [
         InlineKeyboardButton(text="☎️ Admin bilan aloqa", url=f"https://t.me/{admin_username}")
+    ],
+    [
+        InlineKeyboardButton(text="📽️ Filmlarni nomi orqali qidirish", switch_inline_query_current_chat="")
     ]
 ])
 

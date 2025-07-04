@@ -5,6 +5,8 @@ from database.create_channels import connect_db
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loader import dp
 
+from database.manage_tables import add_user
+
 @dp.inline_handler()
 async def inline_movie_search(inline_query: InlineQuery):
     search_text = inline_query.query.lower()
@@ -28,7 +30,7 @@ async def inline_movie_search(inline_query: InlineQuery):
                 title=name.split("\n")[0][:64],
                 description=f"{name}",
                 input_message_content=InputTextMessageContent(
-                    message_text=f"📽 {name}\n\n <i>Iltimos, tugmani bosishdan oldin botga start bosganingizga ishonch hosil qiling!</i> <b>@{BOTUSERNAME}</b>",
+                    message_text=f"📽 {name}\n\n <i>Iltimos, tugmani bosishdan oldin botga start bosganingizga ishonch hosil qiling!</i>\n@{BOTUSERNAME}",
                     parse_mode="HTML"
                 ),
                 reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
@@ -47,6 +49,8 @@ from read_json import get_from_json
 
 @dp.callback_query_handler(lambda c: c.data.startswith("get_movie:"))
 async def send_movie_video(callback_query: CallbackQuery):
+    await add_user(name=callback_query.from_user.full_name, username=callback_query.from_user.username, user_id=callback_query.from_user.id)
+
     try:
         movie_id_str = callback_query.data.split(":")[1]
 
