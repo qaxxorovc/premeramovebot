@@ -1,39 +1,72 @@
 {
     "bot_requires_premium": true,
     "bot_mouth_money": 5000,
-    "helper_video": "BAACAgIAAxkBAAIBRmhZXHM5o2p8OVW_-TOBRijMPx43AAIqdQACnavISkt2SGVpAXgwNgQ",
+    "helper_video": "BAACAgIAAxkBAAIyXGhfp7rvoA3g3wgYlzquCJooDQ9-AAJYggACMOv5Sm4mU5pDyfjzNgQ",
     "card_number": 4073420044842486,
     "card_owner": "OLTIN.SAMANDAROVA",
     "daily_users_count": [
         {
-            "id": 8030337048
+            "id": 5088280767
         },
         {
-            "id": 8079178471
+            "id": 6843241970
         },
         {
-            "id": 5811645663
+            "id": 297844440
         },
         {
-            "id": 7202689960
+            "id": 5097670180
         },
         {
-            "id": 1228615166
+            "id": 7502480829
         },
         {
-            "id": 5354931369
+            "id": 1246571013
         },
         {
-            "id": 5704738055
+            "id": 7170471967
         },
         {
-            "id": 6853534729
+            "id": 8055517111
         },
         {
-            "id": 6517969519
+            "id": 6863772057
         },
         {
-            "id": 6132764534
+            "id": 8064271085
+        },
+        {
+            "id": 7864446530
+        },
+        {
+            "id": 5768897385
+        },
+        {
+            "id": 6501835136
+        },
+        {
+            "id": 1127879511
+        },
+        {
+            "id": 6900286242
+        },
+        {
+            "id": 8039721179
+        },
+        {
+            "id": 7543859662
+        },
+        {
+            "id": 6961979135
+        },
+        {
+            "id": 7538392679
+        },
+        {
+            "id": 7733891484
+        },
+        {
+            "id": 7657202515
         }
     ]
 }
