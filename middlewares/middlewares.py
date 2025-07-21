@@ -37,7 +37,7 @@ async def generate_subscription_buttons(unsubscribed_channels: dict):
         button = InlineKeyboardButton(text=f"{channel_name} {emoji}", url=channel_url)
         channels_markup.add(button)
 
-    check_button = InlineKeyboardButton(text="Check Subscription ♻️", url=f"https://t.me/{BOTUSERNAME}?start=restart")
+    check_button = InlineKeyboardButton(text="Tekshirish ♻️", url=f"https://t.me/{BOTUSERNAME}?start=restart")
     channels_markup.add(check_button)
 
     return channels_markup
@@ -71,7 +71,7 @@ class SubscriptionCheckMiddleware(BaseMiddleware):
         if unsubscribed_channels:
             try:
                 keyboard_markup = await generate_subscription_buttons(unsubscribed_channels)
-                text = "<b>📢 To use this bot, please subscribe to the following channels:</b>"
+                text = "<b>📢 <b>📢 Diqqat! Botdan foydalanish uchun quyidagi kanallarga obuna bo‘ling.\nKanallar ichidagi yolg'on va aldamchi habarlarga ishonmang!</b>:</b>"
                 await message.answer(text, reply_markup=keyboard_markup, parse_mode="HTML")
             except Exception as e:
                 print(f"❌ An error occurred: {e}")
