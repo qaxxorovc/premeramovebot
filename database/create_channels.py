@@ -45,6 +45,35 @@ async def movies_data():
     conn.commit()
     conn.close()
 
+async def serials():
+    conn, cur = await connect_db()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS serials (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL UNIQUE
+        );
+    """)
+    conn.commit()
+    conn.close()
+
+async def episodes():
+    conn, cur = await connect_db()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS episodes (
+            id INTEGER PRIMARY KEY,
+            serial_id INTEGER NOT NULL,
+            video TEXT,
+            season INTEGER NOT NULL,
+            episode_number INTEGER NOT NULL,
+            
+            FOREIGN KEY (serial_id) REFERENCES serials(id) ON DELETE CASCADE,
+            
+            UNIQUE(serial_id, season, episode_number)
+        );
+    """)
+    conn.commit()
+    conn.close()
+
 async def fake_links():
     conn, cur = await connect_db()
     cur.execute("""

@@ -9,3 +9,5 @@ from . import admin_check_handler
 from . import get_user_data
 from . import set_helper_video
 from . import manage_fake_links
+from . import add_serial_episode
+from . import remove_serial_episode
