@@ -5,8 +5,8 @@ from aiogram.dispatcher.middlewares import BaseMiddleware
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from loader import bot
 from data.config import BOTUSERNAME
-from filters.filters import IsAdmin
-from database.manage_tables import get_mdd_channels
+from filters.filters import IsAdmin, IsAdminFunksion
+from database.manage_tables import get_mdd_channels, get_links
 
 EMOJIS = ['🔥', '🌟', '💥', '🎉', '✨', '🚀', '😎', '🎈', '🍀', '💫']
 
@@ -15,7 +15,6 @@ async def is_bot_admin_in_channel(channel_id: int) -> bool:
         member = await bot.get_chat_member(channel_id, bot.id)
         return member.status in ("administrator", "creator")
     except Exception as e:
-        print(f"[is_bot_admin_in_channel] Cannot verify admin in channel {channel_id}: {e}")
         return False
 
 async def check_subscription(user_id: int, channel_id: int) -> bool:
@@ -37,6 +36,19 @@ async def generate_subscription_buttons(unsubscribed_channels: dict):
         button = InlineKeyboardButton(text=f"{channel_name} {emoji}", url=channel_url)
         channels_markup.add(button)
 
+    fake_links = await get_links()
+
+    if fake_links[0]:
+        for link in fake_links:
+            try:
+                link_name = link[1]
+                link_url = link[2]
+                emoji = random.choice(EMOJIS)
+                button = InlineKeyboardButton(text=f"{link_name} {emoji}", url=link_url)
+                channels_markup.add(button)
+            except:
+                pass
+
     check_button = InlineKeyboardButton(text="Tekshirish ♻️", url=f"https://t.me/{BOTUSERNAME}?start=restart")
     channels_markup.add(check_button)
 
@@ -50,8 +62,13 @@ class SubscriptionCheckMiddleware(BaseMiddleware):
 
         user_id = message.from_user.id
 
-        if await IsAdmin()(message):
-            return
+        if update.message:
+            if await IsAdmin()(update.message):
+                return
+
+        elif update.callback_query:
+            if await IsAdminFunksion(update.callback_query.from_user.id):
+                return
 
         all_channels = await get_mdd_channels()
         

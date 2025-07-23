@@ -211,3 +211,37 @@ async def update_user_premium(user_id: str, premium_status: str, sell_time: str,
     """, (premium_status, sell_time, str(new_cash), str(user_id)))
     conn.commit()
     conn.close()    
+
+
+import random
+
+async def add_link(link_name: str, link_url: str):
+    conn, cur = await connect_db()
+
+    while True:
+        link_id = random.randint(100000, 999999)
+        cur.execute("SELECT 1 FROM fake_links WHERE id = ?", (link_id,))
+        exists = cur.fetchone()
+        if not exists:
+            break
+
+    cur.execute(
+        "INSERT INTO fake_links (id, link_name, link_url) VALUES (?, ?, ?)",
+        (link_id, link_name, link_url)
+    )
+    conn.commit()
+    conn.close()
+
+
+async def remove_link(link_id: int):
+    conn, cur = await connect_db()
+    cur.execute("DELETE FROM fake_links WHERE id = ?", (link_id,))
+    conn.commit()
+    conn.close()
+
+async def get_links():
+    conn, cur = await connect_db()
+    cur.execute("SELECT * FROM fake_links")
+    rows = cur.fetchall()
+    conn.close()
+    return rows

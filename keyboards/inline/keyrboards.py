@@ -23,12 +23,27 @@ admin_menu = InlineKeyboardMarkup(inline_keyboard=[
         InlineKeyboardButton(text="📽️ Filmlar bo'limi", callback_data="manage_movies")
     ],
     [
+        InlineKeyboardButton(text="🤫 Soxta linklar", callback_data="add_fake_link_button")
+    ],
+    [
         InlineKeyboardButton(text="🤖 Botni boshqarish", callback_data="admin_manage_bot"),
         InlineKeyboardButton(text="📊 Statistika", callback_data="admin_statistics"),
     ],
     [
         InlineKeyboardButton(text="👨‍💼 User malumotlarini olish", callback_data="get_user_data")
     ]
+])
+
+fake_link_manager_keyrboard = InlineKeyboardMarkup(inline_keyboard=[
+    [
+        InlineKeyboardButton(text="⏬ Fake link qo'shish", callback_data="add_fake_link"),
+    ],
+    [
+        InlineKeyboardButton(text="🗑 Fake link o'chirish", callback_data="remove_fake_link")
+    ],
+    [
+        InlineKeyboardButton(text="❌ Bekor qilish", callback_data="cancel_admin")
+    ],
 ])
 
 manage_movies_keyboard = InlineKeyboardMarkup(inline_keyboard=[

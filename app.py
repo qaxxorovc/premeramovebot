@@ -7,7 +7,7 @@ from middlewares.middlewares import SubscriptionCheckMiddleware
 # from middlewares.middlewares import SimpleSubscriptionMiddleware
 from utils.notify_admins import on_startup_notify
 from utils.set_bot_commands import set_default_commands
-from database.create_channels import middleware_channels,bot_users,movies_data
+from database.create_channels import middleware_channels,bot_users,movies_data,fake_links
 from daily import check_and_expire_subscriptions
 from datetime import datetime
 from loader import dp, bot
@@ -76,6 +76,7 @@ async def on_startup(dispatcher):
     asyncio.create_task(cron_loop())
     await set_default_commands(dispatcher)
     await on_startup_notify(dispatcher)
+    await fake_links()
     await middleware_channels()
     await bot_users()
     await movies_data()

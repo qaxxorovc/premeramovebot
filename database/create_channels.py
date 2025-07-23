@@ -45,6 +45,19 @@ async def movies_data():
     conn.commit()
     conn.close()
 
+async def fake_links():
+    conn, cur = await connect_db()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS fake_links 
+        (
+            id INTEGER PRIMARY KEY,
+            link_name TEXT,
+            link_url TEXT
+        )
+    """)
+    conn.commit()
+    conn.close()
+
 
 async def middleware_channels():
     conn, cur = await connect_db()

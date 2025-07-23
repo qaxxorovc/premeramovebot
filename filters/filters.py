@@ -8,3 +8,9 @@ class IsAdmin(Filter):
             return True
         else:
             return False
+        
+async def IsAdminFunksion(id):
+    if id in ADMINS:
+        return True
+    else:
+        return False

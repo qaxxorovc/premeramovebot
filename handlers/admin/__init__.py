@@ -8,3 +8,4 @@ from . import admin_manage_bot
 from . import admin_check_handler
 from . import get_user_data
 from . import set_helper_video
+from . import manage_fake_links
