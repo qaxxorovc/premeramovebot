@@ -10,4 +10,4 @@
 
 # @dp.message_handler(state=form.waiting_for_name)
 # async def process_name(message: types.Message, state: FSMContext):
-#     await state.update_data(name=message.text) 
+#     await state.update_data(name=message.text)

@@ -7,15 +7,18 @@ from loader import dp
 
 from database.manage_tables import add_user
 
+
 @dp.inline_handler()
 async def inline_movie_search(inline_query: InlineQuery):
     search_text = inline_query.query.lower()
 
     if not search_text:
-        return 
+        return
 
     conn, cur = await connect_db()
-    cur.execute("SELECT * FROM movies WHERE LOWER(movie_name) LIKE ?", (f"%{search_text}%",))
+    cur.execute(
+        "SELECT * FROM movies WHERE LOWER(movie_name) LIKE ?", (f"%{search_text}%",)
+    )
     results = cur.fetchall()
     conn.close()
 
@@ -31,11 +34,17 @@ async def inline_movie_search(inline_query: InlineQuery):
                 description=f"{name}",
                 input_message_content=InputTextMessageContent(
                     message_text=f"📽 {name}\n\n <i>Iltimos, tugmani bosishdan oldin botga start bosganingizga ishonch hosil qiling!</i>\n@{BOTUSERNAME}",
-                    parse_mode="HTML"
+                    parse_mode="HTML",
                 ),
-                reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
-                    InlineKeyboardButton("🎬 Filmni olish", callback_data=f"get_movie:{movie_id}")
-                ]])
+                reply_markup=InlineKeyboardMarkup(
+                    inline_keyboard=[
+                        [
+                            InlineKeyboardButton(
+                                "🎬 Filmni olish", callback_data=f"get_movie:{movie_id}"
+                            )
+                        ]
+                    ]
+                ),
             )
         )
 
@@ -44,12 +53,21 @@ async def inline_movie_search(inline_query: InlineQuery):
 
 from loader import dp, bot
 from aiogram.types import CallbackQuery
-from database.manage_tables import get_movie_by_id, get_user_premium_status, add_download
+from database.manage_tables import (
+    get_movie_by_id,
+    get_user_premium_status,
+    add_download,
+)
 from read_json import get_from_json
+
 
 @dp.callback_query_handler(lambda c: c.data.startswith("get_movie:"))
 async def send_movie_video(callback_query: CallbackQuery):
-    await add_user(name=callback_query.from_user.full_name, username=callback_query.from_user.username, user_id=callback_query.from_user.id)
+    await add_user(
+        name=callback_query.from_user.full_name,
+        username=callback_query.from_user.username,
+        user_id=callback_query.from_user.id,
+    )
 
     try:
         movie_id_str = callback_query.data.split(":")[1]
@@ -62,7 +80,9 @@ async def send_movie_video(callback_query: CallbackQuery):
         movie = await get_movie_by_id(movie_id)
 
         if not movie:
-            await bot.send_message(callback_query.from_user.id, "❌ Bunday ID bilan film topilmadi.")
+            await bot.send_message(
+                callback_query.from_user.id, "❌ Bunday ID bilan film topilmadi."
+            )
             return
 
         bot_requires_premium = get_from_json("bot_requires_premium")
@@ -73,7 +93,7 @@ async def send_movie_video(callback_query: CallbackQuery):
                 await bot.send_message(
                     callback_query.from_user.id,
                     "❗️ Ushbu filmni ko‘rish uchun tarif sotib olishingiz kerak.\n"
-                    "🛒 Tarif olish uchun /buy yoki menyudagi 'Tarif sotib olish' tugmasini bosing."
+                    "🛒 Tarif olish uchun /buy yoki menyudagi 'Tarif sotib olish' tugmasini bosing.",
                 )
                 return
 
@@ -84,7 +104,7 @@ async def send_movie_video(callback_query: CallbackQuery):
             chat_id=callback_query.from_user.id,
             video=video_id,
             caption=f"🎬 {name}\n📥 Yuklab olingan: {count} marta",
-            protect_content=True
+            protect_content=True,
         )
     except:
         print("ERROR +++++++++++++++++++++++++++++++++++++")

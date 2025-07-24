@@ -5,7 +5,7 @@ from database.manage_tables import (
     get_user_premium_status,
     add_download,
     get_episode_by_id,
-    get_serial_by_id
+    get_serial_by_id,
 )
 from keyboards.inline.keyrboards import generate_episode_keyboard as episode_keyboard
 from read_json import get_from_json
@@ -33,7 +33,7 @@ async def send_film_by_id(msg: types.Message):
         await msg.answer_video(
             video=video_id,
             caption=f"🎬 {name}\n📥 Yuklab olingan: {count} marta",
-            protect_content=True
+            protect_content=True,
         )
         return
 
@@ -59,21 +59,19 @@ async def send_film_by_id(msg: types.Message):
 
         _, serial_title = serial
 
-        caption = (
-            f"🎞 {serial_title}\n"
-            f"📂 {season}-fasl {episode_number}-qism"
-        )
+        caption = f"🎞 {serial_title}\n" f"📂 {season}-fasl {episode_number}-qism"
 
         await msg.answer_video(
             video=video_id,
             caption=caption,
             protect_content=True,
-            reply_markup=await episode_keyboard(serial_id)
+            reply_markup=await episode_keyboard(serial_id),
         )
         return
 
     # 3. Hech narsa topilmasa
     await msg.answer("❌ Bunday ID bilan film yoki qism topilmadi.")
+
 
 @dp.callback_query_handler(lambda c: c.data.startswith("watch_episode:"))
 async def watch_episode_handler(call: types.CallbackQuery):
@@ -101,17 +99,14 @@ async def watch_episode_handler(call: types.CallbackQuery):
 
         _, serial_title = serial
 
-        caption = (
-            f"🎞 {serial_title}\n"
-            f"📂 {season}-fasl {episode_number}-qism"
-        )
+        caption = f"🎞 {serial_title}\n" f"📂 {season}-fasl {episode_number}-qism"
         try:
 
             await call.message.edit_media(
                 video=video_id,
                 caption=caption,
                 protect_content=True,
-                reply_markup=await episode_keyboard(serial_id)
+                reply_markup=await episode_keyboard(serial_id),
             )
         except:
 
@@ -119,7 +114,7 @@ async def watch_episode_handler(call: types.CallbackQuery):
                 video=video_id,
                 caption=caption,
                 protect_content=True,
-                reply_markup=await episode_keyboard(serial_id)
+                reply_markup=await episode_keyboard(serial_id),
             )
         return
 

@@ -10,6 +10,7 @@ from filters.filters import IsAdmin
 
 from data.config import films_channel_id
 
+
 # --- STATES ---
 class AddMovieState(StatesGroup):
     video = State()
@@ -22,11 +23,17 @@ def cancel_keyboard():
         InlineKeyboardButton("❌ Bekor qilish", callback_data="cancel_admin")
     )
 
+
 # --- START COMMAND HANDLER ---
-@dp.callback_query_handler(IsAdmin(),lambda c: c.data == "add_movie")  # ADMIN_ID ni real ID bilan almashtiring
+@dp.callback_query_handler(
+    IsAdmin(), lambda c: c.data == "add_movie"
+)  # ADMIN_ID ni real ID bilan almashtiring
 async def add_movie_command(call: types.CallbackQuery):
-    await call.message.answer("🎬 Film videosini yuboring:", reply_markup=cancel_keyboard())
+    await call.message.answer(
+        "🎬 Film videosini yuboring:", reply_markup=cancel_keyboard()
+    )
     await AddMovieState.video.set()
+
 
 # --- STEP 1: VIDEO ---
 @dp.message_handler(content_types=types.ContentType.VIDEO, state=AddMovieState.video)
@@ -35,23 +42,33 @@ async def process_video(msg: types.Message, state: FSMContext):
     await msg.answer("🎬 Endi film nomini yuboring:", reply_markup=cancel_keyboard())
     await AddMovieState.name.set()
 
+
 @dp.message_handler(state=AddMovieState.name)
 async def process_name(msg: types.Message, state: FSMContext):
     await state.update_data(movie_name=msg.text)
     data = await state.get_data()
-    movie_video_id = data['movie_video']
+    movie_video_id = data["movie_video"]
 
     try:
         movie_code = await add_movie(
-            movie_name=data['movie_name'],
-            movie_video=movie_video_id
+            movie_name=data["movie_name"], movie_video=movie_video_id
         )
 
-        await msg.answer(f"✅ Film muvaffaqiyatli qo‘shildi!\n<code>{movie_code}</code>", parse_mode="HTML")
+        await msg.answer(
+            f"✅ Film muvaffaqiyatli qo‘shildi!\n<code>{movie_code}</code>",
+            parse_mode="HTML",
+        )
 
-        keyboard = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="🤖 Botga kirish", url=f"https://t.me/{(await msg.bot.get_me()).username}")]
-        ])
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(
+                        text="🤖 Botga kirish",
+                        url=f"https://t.me/{(await msg.bot.get_me()).username}",
+                    )
+                ]
+            ]
+        )
 
         caption = (
             f"🎬 Yangi film: <b>{data['movie_name']}</b>\n"
@@ -64,7 +81,7 @@ async def process_name(msg: types.Message, state: FSMContext):
             video=movie_video_id,
             caption=caption,
             reply_markup=keyboard,
-            parse_mode="HTML"
+            parse_mode="HTML",
         )
 
     except Exception as e:

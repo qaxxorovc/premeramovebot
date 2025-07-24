@@ -5,15 +5,19 @@ from loader import dp
 from keyboards.inline.keyrboards import admin_menu, cancel_admin
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
+
 class GetUserState(StatesGroup):
     waiting_for_user_id = State()
 
 
 @dp.callback_query_handler(lambda c: c.data == "get_user_data")
 async def ask_user_id(callback: types.CallbackQuery, state: FSMContext):
-    await callback.message.answer("🔢 Foydalanuvchi ID raqamini kiriting:", reply_markup=cancel_admin)
+    await callback.message.answer(
+        "🔢 Foydalanuvchi ID raqamini kiriting:", reply_markup=cancel_admin
+    )
     await GetUserState.waiting_for_user_id.set()
     await callback.answer()
+
 
 @dp.message_handler(state=GetUserState.waiting_for_user_id)
 async def show_user_info(msg: types.Message, state: FSMContext):

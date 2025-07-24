@@ -7,5 +7,5 @@ shablon = ReplyKeyboardMarkup(
             KeyboardButton(text="Test"),
         ],
     ],
-    resize_keyboard=True 
+    resize_keyboard=True,
 )

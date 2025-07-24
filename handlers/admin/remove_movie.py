@@ -7,23 +7,30 @@ from loader import dp, bot
 from database.manage_tables import get_movie_by_id, remove_movie
 from filters.filters import IsAdmin
 
+
 class RemoveFilmState(StatesGroup):
     waiting_for_id = State()
 
 
 # --- Filmni o‘chirish menyusi ---
 def confirm_remove_keyboard(film_id: int):
-    return InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton("✅ Ha, o‘chirish", callback_data=f"confirm_remove:{film_id}"),
-            InlineKeyboardButton("❌ Bekor qilish", callback_data="cancel_admin")
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    "✅ Ha, o‘chirish", callback_data=f"confirm_remove:{film_id}"
+                ),
+                InlineKeyboardButton("❌ Bekor qilish", callback_data="cancel_admin"),
+            ]
         ]
-    ])
+    )
 
 
-@dp.callback_query_handler(IsAdmin(),lambda c: c.data == "remove_film")
+@dp.callback_query_handler(IsAdmin(), lambda c: c.data == "remove_film")
 async def ask_film_id(callback: types.CallbackQuery, state: FSMContext):
-    await callback.message.edit_text("📽️ O‘chirmoqchi bo‘lgan film ID raqamini yuboring:")
+    await callback.message.edit_text(
+        "📽️ O‘chirmoqchi bo‘lgan film ID raqamini yuboring:"
+    )
     await RemoveFilmState.waiting_for_id.set()
     await callback.answer()
 
@@ -48,8 +55,8 @@ async def process_film_id(msg: types.Message, state: FSMContext):
     await msg.answer_video(
         video=movie_video,
         caption=f"📽️ Film: <b>{movie_name}</b>\n📥 Yuklab olingan: {count} marta\n\nFilmni o‘chirishni tasdiqlaysizmi?",
-        parse_mode='HTML',
-        reply_markup=confirm_remove_keyboard(movie_id)
+        parse_mode="HTML",
+        reply_markup=confirm_remove_keyboard(movie_id),
     )
 
 
@@ -61,7 +68,7 @@ async def confirm_deletion(callback: types.CallbackQuery):
     await callback.answer()
 
 
-@dp.callback_query_handler(lambda c: c.data == "cancel_admin", state='*')
+@dp.callback_query_handler(lambda c: c.data == "cancel_admin", state="*")
 async def cancel_handler(callback: types.CallbackQuery, state: FSMContext):
     await state.finish()
     await callback.message.edit_text("❌ Bekor qilindi.")

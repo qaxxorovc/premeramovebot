@@ -2,31 +2,44 @@ from datetime import datetime
 from loader import dp, bot
 from database.manage_tables import connect_db
 
+
 async def check_and_expire_subscriptions():
     conn, cur = await connect_db()
-    cur.execute("SELECT user_id, user_premium_sell_time FROM users WHERE user_premium_status = 'true'")
+    cur.execute(
+        "SELECT user_id, user_premium_sell_time FROM users WHERE user_premium_status = 'true'"
+    )
     rows = cur.fetchall()
 
     for user_id, sell_time in rows:
         try:
             if sell_time == "00-00-0000":
-                cur.execute("""
+                cur.execute(
+                    """
                     UPDATE users 
                     SET user_premium_status = 'false'
                     WHERE user_id = ?
-                """, (str(user_id),))
+                """,
+                    (str(user_id),),
+                )
                 continue
-            
-            delta_days = (datetime.now() - datetime.strptime(sell_time, "%d-%m-%Y")).days
+
+            delta_days = (
+                datetime.now() - datetime.strptime(sell_time, "%d-%m-%Y")
+            ).days
             if delta_days >= 30:
-                cur.execute("""
+                cur.execute(
+                    """
                     UPDATE users 
                     SET user_premium_status = 'false', 
                         user_premium_sell_time = '00-00-0000' 
                     WHERE user_id = ?
-                """, (str(user_id),))
+                """,
+                    (str(user_id),),
+                )
                 try:
-                    await bot.send_message(user_id, "❌ Sizning Premium obunangiz muddati tugadi.")
+                    await bot.send_message(
+                        user_id, "❌ Sizning Premium obunangiz muddati tugadi."
+                    )
                 except:
                     print("❌ Premium obunangiz muddati tugadi.")
         except Exception as e:

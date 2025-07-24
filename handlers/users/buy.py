@@ -2,17 +2,26 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from loader import dp
-from keyboards.inline.keyrboards import get_check_admin_buttons, cancel_user,sub_cc,cancel_user_back, main_menu_for_users
+from keyboards.inline.keyrboards import (
+    get_check_admin_buttons,
+    cancel_user,
+    sub_cc,
+    cancel_user_back,
+    main_menu_for_users,
+)
 from data.config import debug_group
 from read_json import get_from_json, change_from_json
 from database.manage_tables import get_user_data, update_user_premium
 from datetime import datetime
 
+
 class BuyStates(StatesGroup):
     amount = State()
     check = State()
 
+
 from read_json import get_from_json
+
 
 @dp.callback_query_handler(lambda x: x.data == "buy")
 async def buy_start(call: types.CallbackQuery):
@@ -22,11 +31,11 @@ async def buy_start(call: types.CallbackQuery):
         await call.message.answer("❌ Siz ro‘yxatdan o‘tmagansiz.")
         return
 
-    if user['user_premium_status'] == "true":
+    if user["user_premium_status"] == "true":
         await call.message.answer("✅ Sizda allaqachon Premium obuna mavjud.")
         return
 
-    cash = user['user_cash']
+    cash = user["user_cash"]
     sub_price = get_from_json("bot_mouth_money")
 
     text = f"""
@@ -48,10 +57,10 @@ async def buy_start(call: types.CallbackQuery):
 """
     await call.message.answer(text, reply_markup=sub_cc, parse_mode="HTML")
 
+
 @dp.callback_query_handler(lambda x: x.data == "add_cash_money")
 async def buy_start(call: types.CallbackQuery, state: FSMContext):
     helper_video = get_from_json("helper_video")
-
 
     if helper_video:  # agar video ID mavjud bo‘lsa
         text = f"<i>📹Videoda qanday qilib hisob to'ldirish ko'rsatilgan!</i>\n<b>💬 Ho‘sh, qancha tashlamoqchisiz?</b>"
@@ -59,17 +68,16 @@ async def buy_start(call: types.CallbackQuery, state: FSMContext):
             video=helper_video,
             caption=text,
             parse_mode="HTML",
-            reply_markup=cancel_user_back
+            reply_markup=cancel_user_back,
         )
     else:
         text = f"<b>💬 Ho‘sh, qancha tashlamoqchisiz?</b>"
         await call.message.answer(
-            text,
-            parse_mode="HTML",
-            reply_markup=cancel_user_back
+            text, parse_mode="HTML", reply_markup=cancel_user_back
         )
 
     await BuyStates.amount.set()
+
 
 @dp.callback_query_handler(lambda x: x.data == "buy_sub")
 async def buy_subscription(callback: types.CallbackQuery):
@@ -80,7 +88,7 @@ async def buy_subscription(callback: types.CallbackQuery):
         await callback.message.answer("❌ Foydalanuvchi topilmadi.")
         return
 
-    user_cash = int(user['user_cash'])
+    user_cash = int(user["user_cash"])
     sub_price = int(get_from_json("bot_mouth_money"))
 
     if user_cash < sub_price:
@@ -93,9 +101,14 @@ async def buy_subscription(callback: types.CallbackQuery):
     new_cash = user_cash - sub_price
     today = datetime.now().strftime("%d-%m-%Y")
 
-    await update_user_premium(user_id=user_id, premium_status="true", sell_time=today, new_cash=new_cash)
+    await update_user_premium(
+        user_id=user_id, premium_status="true", sell_time=today, new_cash=new_cash
+    )
 
-    await callback.message.answer("✅ Tabriklaymiz! 1 oylik obunaga muvaffaqiyatli ulandingiz.", reply_markup=main_menu_for_users)
+    await callback.message.answer(
+        "✅ Tabriklaymiz! 1 oylik obunaga muvaffaqiyatli ulandingiz.",
+        reply_markup=main_menu_for_users,
+    )
     await callback.answer()
 
 
@@ -118,9 +131,10 @@ async def buy_start(msg: types.Message):
 🔐 To‘lovingiz tekshirilgach, hisobingizga obuna qo‘shiladi.
 
 <b>💬 Ho‘sh, qancha tashlamoqchisiz?</b>
-"""    
+"""
     await msg.answer(text, reply_markup=sub_cc)
     await BuyStates.amount.set()
+
 
 @dp.message_handler(state=BuyStates.amount)
 async def get_amount(msg: types.Message, state: FSMContext):
@@ -128,8 +142,12 @@ async def get_amount(msg: types.Message, state: FSMContext):
         await msg.answer("❗️Faqat raqam kiriting.", reply_markup=cancel_user_back)
         return
     await state.update_data(amount=int(msg.text))
-    await msg.answer("✅ Endi chekni yuboring (screenshot yoki rasm ko‘rinishida).", reply_markup=cancel_user_back)
+    await msg.answer(
+        "✅ Endi chekni yuboring (screenshot yoki rasm ko‘rinishida).",
+        reply_markup=cancel_user_back,
+    )
     await BuyStates.check.set()
+
 
 @dp.message_handler(content_types=types.ContentType.PHOTO, state=BuyStates.check)
 async def get_check(msg: types.Message, state: FSMContext):
@@ -150,7 +168,7 @@ async def get_check(msg: types.Message, state: FSMContext):
         photo=msg.photo[-1].file_id,
         caption=caption,
         reply_markup=get_check_admin_buttons(user_id=user.id, amount=amount),
-        parse_mode="HTML"
+        parse_mode="HTML",
     )
 
     await msg.answer("✅ Chek adminga yuborildi! Tez orada tekshiriladi.")
